@@ -54,7 +54,7 @@ const Products = () => {
                 <Grid item size={{ xs: 12, sm: 6, md: 4 }} key={index}>
                   <Link to={`${product.id}`}>
                     <Paper
-                      elevation={3} // Subtle shadow for depth
+                      elevation={6} // Subtle shadow for depth
                       sx={{
                         display: 'flex',
                         flexDirection: 'column',

@@ -108,7 +108,7 @@ const Home = () => {
             {products.map((product, index) => (
               <Grid item size={{ xs: 12, md: 4 }} key={product.id}>
                   <Link to={`products/${product.id}`} >
-                  <Box sx={{ position: 'relative', borderRadius: '5px', height: '500px', transition: 'transform 0.3s ease-in-out', ":hover": { transform: 'scale(1.02)' } }}>
+                  <Box sx={{ position: 'relative', borderRadius: '5px', height: '500px', transition: 'transform 0.3s ease-in-out', boxShadow: '5px 5px 20px rgba(0,0,0,0.5)', ":hover": { transform: 'scale(1.02)' } }}>
                     <img src={image} alt=""
                       className='w-full h-full object-cover object-center rounded-[5px]' />
                     {/* Rotated Arrow Icon */}
@@ -125,7 +125,7 @@ const Home = () => {
                         justifyContent: 'center',
                         alignItems: 'center',
                         zIndex: 2,
-                        transition: 'all 0.3s ease-in-out',
+                        transition: 'all 0.2s ease-in-out',
                         transform: 'rotate(-45deg)',
                         cursor: 'pointer',
                         ":hover": { bgcolor: 'red' },

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, NavLink, useMatch } from 'react-router-dom';
+import { Link, NavLink, useMatch, useParams } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Box, Drawer, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
@@ -24,13 +24,16 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const links = ['Products', 'About', 'Contact'];
+  const links = ['Gallery', 'Products', 'About', 'Contact'];
 
   const activeStyles = {
     fontWeight: 'bold',
   };
 
-  const isProductDetailPage = !!useMatch('/products/:id')
+  const { id } = useParams()
+
+  // const isProductDetailPage = !!useMatch('/products/:id')
+  const isProductDetailPage = !!id
 
   return (
     <header
@@ -42,11 +45,9 @@ const Header = () => {
       <div className="flex justify-between items-center px-4 sm:px-8">
         {/* Centered brand name */}
         <Link to="/" className={`text-center `}>
-          <p className={`text-2xl sm:text-4xl font-extrabold 
-            ${scrolled ? 'text-red-600' : 'text-white'} 
+          <p className={`text-2xl sm:text-4xl font-extrabold text-red-600
             ${open ? 'hidden' : 'flex'}
-            ${isProductDetailPage ? 'text-red-500' : ''}`
-          }
+            `}
           >
             ELEVATION EX
           </p>
@@ -54,8 +55,8 @@ const Header = () => {
 
         {/* Navigation - hidden on small screens and visible on larger ones */}
         <nav className={`hidden md:flex gap-6 text-lg
-          ${scrolled ? 'text-white' : 'text-white'}
-          ${isProductDetailPage ? `${scrolled ? 'text-white': 'text-black'}` : 'text-white'}
+          ${scrolled ? 'text-white' : 'text-black'}
+          // ${isProductDetailPage ? 'text-black' : 'text-white'}
           `} >
           {links.map((link, index) => (
             <NavLink
@@ -72,7 +73,7 @@ const Header = () => {
           onClick={toggleOpen}
           sx={{
             display: { sm: 'block', md: 'none' },
-            color: isProductDetailPage? `${scrolled? 'white': 'black'}`: 'white',
+            color: isProductDetailPage ? `${scrolled ? 'white' : 'black'}` : 'white',
             zIndex: '50',
           }}
         >
@@ -85,8 +86,8 @@ const Header = () => {
           onClose={() => setOpen(false)}
           PaperProps={{
             sx: {
-              width: '100%', // Adjust drawer width
-              bgcolor: '#f4f4f4', // Drawer background
+              width: '100%',
+              bgcolor: '#f4f4f4',
               padding: '1rem',
               display: { sm: 'block', md: 'none' }
             },
