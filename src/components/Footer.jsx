@@ -59,7 +59,7 @@ const Footer = () => {
       {/* footer bottom------------------------------------------------------------ */}
       <div class="bg-red-700 w-full text-white">
         <div class="max-w-7xl mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
-          <p class=" text-sm text-center sm:text-left">© 2024 GOG INDUSTRY</p>
+          <p class=" text-sm text-center sm:text-left">© 2024 ELEVATION EX</p>
 
           <span class="inline-flex sm:ml-auto sm:mt-0 mt-2 justify-center sm:justify-start">
             <a class=" cursor-pointer">

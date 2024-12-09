@@ -21,11 +21,6 @@ import logo5 from '../assets/logos/logo5.png'
 import logo6 from '../assets/logos/logo6.png'
 import logo7 from '../assets/logos/logo7.png'
 
-// thi prepares the server for the development so it does not interfere with production
-// if (process.env.NODE_ENV === 'development') {
-//   makeServer();
-// }
-
 const Home = () => {
   const [products, setProducts] = useState([]);
 
@@ -100,14 +95,14 @@ const Home = () => {
 
       {/* Featured Products section---------------------------------------- */}
       <Box sx={{ maxWidth: '80rem', mx: 'auto', py: '50px', px: '1rem', display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="h4" component={'h2'} sx={{ mb: 4 }}>
+        <Typography variant="h4" component={'h2'} sx={{ mb: 4 }} textAlign={'center'}>
           Popular Products
         </Typography>
         {products ? (
           <Grid container spacing={4} justifyContent={'center'}>
             {products.map((product, index) => (
               <Grid item size={{ xs: 12, md: 4 }} key={product.id}>
-                  <Link to={`products/${product.id}`} >
+                <Link to={`products/${product.id}`} >
                   <Box sx={{ position: 'relative', borderRadius: '5px', height: '500px', transition: 'transform 0.3s ease-in-out', boxShadow: '5px 5px 20px rgba(0,0,0,0.5)', ":hover": { transform: 'scale(1.02)' } }}>
                     <img src={image} alt=""
                       className='w-full h-full object-cover object-center rounded-[5px]' />
@@ -153,8 +148,8 @@ const Home = () => {
                       <Typography variant="body1" fontWeight={'thin'}>{product.headline}</Typography>
                     </Box>
                   </Box>
-              </Link>
-                </Grid>
+                </Link>
+              </Grid>
 
             )).slice(0, 3)}
           </Grid>
@@ -220,9 +215,11 @@ const Home = () => {
             <Typography variant="body1" mb={4}>
               Apparel that redefines versatility and sophistication.
             </Typography>
-            <Button variant="outlined" color='customRed'>
-              Discover Lifestyle Apparel
-            </Button>
+            <Link to='products'>
+              <Button variant="outlined" color='customRed'>
+                Discover Lifestyle Apparel
+              </Button>
+            </Link>
           </Box>
         </Box >
 
@@ -252,9 +249,11 @@ const Home = () => {
             <Typography variant="body1" mb={4}>
               Built for speed, safety, and unmatched performance.
             </Typography>
-            <Button variant="contained" color='customRed'>
-              Explore Motorbike Gear
-            </Button>
+            <Link to='products'>
+              <Button variant="contained" color='customRed'>
+                Explore Motorbike Gear
+              </Button>
+            </Link>
           </Box>
         </Box >
       </Box >
@@ -270,7 +269,7 @@ const Home = () => {
           overflow: 'hidden',
         }}
       >
-        <Typography variant="h4" component={'h2'} sx={{ mb: 4 }}>
+        <Typography variant="h4" component={'h2'} sx={{ mb: 4 }} textAlign={'center'}>
           Trusted Clients
         </Typography>
 
