@@ -32,7 +32,8 @@ const Header = () => {
 
   const { id } = useParams()
 
-  // const isProductDetailPage = !!useMatch('/products/:id')
+  // const isGallery = !!useMatch('/gallery')
+  // const isProductDetailPage = !!id || !!isGallery --> this ensures the styles for pages which do not have header banners
   const isProductDetailPage = !!id
 
   return (

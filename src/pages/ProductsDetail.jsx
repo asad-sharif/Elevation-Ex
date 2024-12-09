@@ -17,13 +17,71 @@ import {
   AccordionSummary,
   AccordionDetails,
   Stack,
+  Modal,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { theme } from '@/theme';
+import { Notification,  useToaster } from 'rsuite';
+import 'rsuite/dist/rsuite-no-reset.min.css';
+
+
 
 const ProductsDetail = () => {
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const [open, setOpen] = useState(false)
+  const toast = useToaster()
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    message: ''
+  })
+
+  function handleOpen() {
+    setOpen(prev => !prev)
+  }
+
+  function handleChange(e) {
+    const { name, phone, email, message, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    toast.push(
+      <Notification type='success' header='Order Submitted' closable>
+        We have received your details. Our team will contact you soon to finalize the order, inshAllah!
+      </Notification>,
+      { placement: 'bottomEnd', duration: 5000 }
+    )
+
+    setOpen(false)
+    setFormData({
+      name: '',
+      phone: '',
+      email: '',
+      message: ''
+    })
+    console.log("Form Data Submitted:", formData);
+  }
+
+
+
+  const modalStyles = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    boxShadow: 24,
+    backgroundColor: 'white',
+    borderRadius: '5px'
+  };
+
   const { id } = useParams();
 
   useEffect(() => {
@@ -107,11 +165,8 @@ const ProductsDetail = () => {
             </Typography>
           </Box>
           <Box mt={4} display="flex" gap={2}>
-            <Button variant="contained" sx={{ bgcolor: theme.palette.customRed.main }} fullWidth>
-              Add to Cart
-            </Button>
-            <Button variant="outlined" color="customRed" fullWidth>
-              Buy Now
+            <Button variant="contained" color="customRed" sx={{ color: 'white' }} fullWidth onClick={handleOpen}>
+              Order Now
             </Button>
           </Box>
         </Grid>
@@ -283,6 +338,77 @@ const ProductsDetail = () => {
           ))}
         </Grid>
       </Box>
+
+      {/* Modal ------------------------------------- */}
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={{ px: '1rem', py: '2rem', width:{xs:'90%', md:'50%', lg:'50%'} }}
+          style={modalStyles}
+        >
+          <form className='flex flex-col md:ml-auto w-full' onSubmit={handleSubmit}>
+            <h2 className='text-gray-900 text-2xl mb-1 font-medium title-font'>Your order details</h2>
+
+            <div className='relative mb-4'>
+              <label htmlFor='name' className='leading-7 text-sm text-gray-600'>Name</label>
+              <input
+                type='text'
+                id='name'
+                name='name'
+                onChange={handleChange}
+                value={formData.name}
+                className='w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+                required
+              />
+            </div>
+            <div className='relative mb-4'>
+              <label htmlFor='phoneNumber' className='leading-7 text-sm text-gray-600'>Phone</label>
+              <input
+                type='tel'
+                id='phone'
+                name='phone'
+                onChange={handleChange}
+                value={formData.phone}
+                className='w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+              />
+            </div>
+            <div className='relative mb-4'>
+              <label htmlFor='email' className='leading-7 text-sm text-gray-600'>Email</label>
+              <input
+                type='email'
+                id='email'
+                name='email'
+                onChange={handleChange}
+                value={formData.email}
+                className='w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
+                required
+              />
+            </div>
+            <div className='relative mb-4'>
+              <label htmlFor='message' className='leading-7 text-sm text-gray-600'>Message</label>
+              <textarea
+                id='message'
+                name='message'
+                onChange={handleChange}
+                value={formData.message}
+                className='w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out'
+                required
+              ></textarea>
+            </div>
+            <button type='submit' className='text-white w-full bg-gradient-to-r from-red-700 to bg-red-900 border-0 py-2 px-6 focus:outline-none hover:bg-red-800 rounded text-lg'>
+              Confirm Your Order
+            </button>
+            <p className='text-xs text-gray-500 mt-3'>
+              We may reach out to you via email or phone number.
+            </p>
+          </form>
+
+        </Box>
+      </Modal>
 
     </Box>
   );

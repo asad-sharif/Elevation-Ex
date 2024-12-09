@@ -1,9 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import LocalPhoneOutlinedIcon from '@mui/icons-material/LocalPhoneOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import { Notification, useToaster } from 'rsuite';
+import 'rsuite/dist/rsuite-no-reset.min.css';
 
 const Contact = () => {
+  const toast = useToaster()
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    message: ''
+  })
+
+  function handleChange(e) {
+    const { name, phone, email, message, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    toast.push(
+      <Notification type='success' header='Request Submitted' closable>
+        We have received your details. Our team will contact you soon to finalize the order, inshAllah!
+      </Notification>,
+      { placement: 'bottomEnd', duration: 5000 }
+    )
+    
+    console.log("Form Data Submitted:", formData);
+
+    setFormData({
+      name: '',
+      phone: '',
+      email: '',
+      message: ''
+    })
+  }
+
   return (
     < div className='w-full' >
       {/* Header Section */}
@@ -60,7 +98,7 @@ const Contact = () => {
           </div>
 
           {/* Contact Form */}
-          <form className='lg:w-1/3 md:w-1/2 flex flex-1 flex-col md:ml-auto w-full md:py-8 mt-8 md:mt-0'>
+          <form className='lg:w-1/3 md:w-1/2 flex flex-1 flex-col md:ml-auto w-full md:py-8 mt-8 md:mt-0' onSubmit={handleSubmit}>
             <h2 className='text-gray-900 text-2xl mb-1 font-medium title-font'>Request a quote</h2>
 
             <div className='relative mb-4'>
@@ -69,6 +107,8 @@ const Contact = () => {
                 type='text'
                 id='name'
                 name='name'
+                onChange={handleChange}
+                value={formData.name}
                 className='w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
                 required
               />
@@ -77,8 +117,10 @@ const Contact = () => {
               <label htmlFor='phoneNumber' className='leading-7 text-sm text-gray-600'>Phone</label>
               <input
                 type='tel'
-                id='phoneNumber'
-                name='phoneNumber'
+                id='phone'
+                name='phone'
+                onChange={handleChange}
+                value={formData.phone}
                 className='w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
               />
             </div>
@@ -88,6 +130,8 @@ const Contact = () => {
                 type='email'
                 id='email'
                 name='email'
+                onChange={handleChange}
+                value={formData.email}
                 className='w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
                 required
               />
@@ -97,6 +141,8 @@ const Contact = () => {
               <textarea
                 id='message'
                 name='message'
+                onChange={handleChange}
+                value={formData.message}
                 className='w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out'
                 required
               ></textarea>
