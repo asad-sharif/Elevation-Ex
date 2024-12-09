@@ -18,11 +18,15 @@ import {
   AccordionDetails,
   Stack,
   Modal,
+  IconButton,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { theme } from '@/theme';
 import { Notification,  useToaster } from 'rsuite';
 import 'rsuite/dist/rsuite-no-reset.min.css';
+import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
+import SentimentSatisfiedOutlinedIcon from '@mui/icons-material/SentimentSatisfiedOutlined';
+import WorkspacePremiumOutlinedIcon from '@mui/icons-material/WorkspacePremiumOutlined';
 
 
 
@@ -92,7 +96,7 @@ const ProductsDetail = () => {
 
       const relatedResponse = await fetch(`/api/products?category=${data.product.category}`);
       const relatedData = await relatedResponse.json();
-      
+
       const filteredProducts = relatedData.products
         .filter((p) => p.id !== data.product.id)
         .slice(0, 3);
@@ -180,9 +184,9 @@ const ProductsDetail = () => {
         </Typography>
         <Grid container spacing={3}>
           {[
-            'Impact-resistant padding for safety.',
-            'Snug fit for enhanced comfort.',
-            'Premium-quality leather for durability.',
+            { title: 'Impact-resistant padding for safety.', icon: <VerifiedUserOutlinedIcon fontSize='large' sx={{mr:'1rem'}}/>},
+            { title: 'Snug fit for enhanced comfort.', icon: <SentimentSatisfiedOutlinedIcon fontSize='large' sx={{mr:'1rem'}}/>},
+            { title: 'Premium-quality leather for durability.', icon: <WorkspacePremiumOutlinedIcon fontSize='large' sx={{mr:'1rem'}}/>},
           ].map((feature, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
               <Card
@@ -198,9 +202,10 @@ const ProductsDetail = () => {
                   },
                   bgcolor: 'rgba(255, 0, 0, 0.05)',
                 }}
-              >
+              >                
                 <Typography variant="body1" fontWeight="500">
-                  {feature}
+                  {feature.icon}
+                  {feature.title}
                 </Typography>
               </Card>
             </Grid>
