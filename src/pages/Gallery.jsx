@@ -66,7 +66,7 @@ const Gallery = () => {
           gap={5}>
           {imgList.map((item, index) => (
             <ImageListItem key={index}>
-              <img src={item.img} alt={item.altText} className='w-full h-auto' loading='lazy' />
+              <img src={item.img} alt={item.altText} className='w-full h-auto object-cover object-center' loading='lazy' />
             </ImageListItem>
           ))}
         </ImageList>

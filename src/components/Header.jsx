@@ -24,17 +24,24 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const links = ['Gallery', 'Products', 'About', 'Contact'];
-
+  const links = [
+    { name: 'Home', path: '/' },
+    { name: 'Gallery', path: '/gallery' },
+    { name: 'Products', path: '/products' },
+    { name: 'About', path: '/about' },
+    { name: 'Contact', path: '/contact' },
+  ];
   const activeStyles = {
     fontWeight: 'bold',
   };
 
   const { id } = useParams()
 
+  const isPolicyPage = !!useMatch('/privacy-policies')
+  const isTCPage = !!useMatch('/terms-and-conditions')
   // const isGallery = !!useMatch('/gallery')
   // const isProductDetailPage = !!id || !!isGallery --> this ensures the styles for pages which do not have header banners
-  const isProductDetailPage = !!id
+  const isProductDetailPage = !!id || !!isPolicyPage || !!isTCPage
 
   return (
     <header
@@ -63,9 +70,9 @@ const Header = () => {
             <NavLink
               key={index}
               style={({ isActive }) => (isActive ? activeStyles : null)}
-              to={`${link.toLowerCase()}`}
+              to={link.path}
             >
-              {link}
+              {link.name}
             </NavLink>
           ))}
         </nav>
@@ -126,7 +133,7 @@ const Header = () => {
             {links.map((link, index) => (
               <NavLink
                 key={index}
-                to={`${link.toLowerCase()}`}
+                to={link.path}
                 onClick={() => setOpen(false)}
                 style={({ isActive }) =>
                   isActive
@@ -134,7 +141,7 @@ const Header = () => {
                     : { color: '#333' }
                 }
               >
-                {link}
+                {link.name}
               </NavLink>
             ))}
           </Box>

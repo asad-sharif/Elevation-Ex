@@ -22,9 +22,8 @@ const Footer = () => {
         <div class="px-4 ">
           <h2 class="title-font font-medium text-gray-900 mb-3">Policies</h2>
           <nav className='flex flex-col gap-4 text-gray-600 hover:text-gray-800'>
-            <Link to=''>Privacy Policy</Link>
-            <Link to=''>Another Policy</Link>
-            <Link to=''>Another Policy</Link>
+            <Link to='privacy-policies'>Privacy Policy</Link>
+            <Link to='terms-and-conditions'>Terms and Conditions</Link>
           </nav>
         </div>
 

@@ -151,7 +151,7 @@ const Products = () => {
                             textTransform: 'none',
                           }}
                         >
-                          Add to Cart
+                          View Details
                         </Button>
                       </Box>
                     </Paper>

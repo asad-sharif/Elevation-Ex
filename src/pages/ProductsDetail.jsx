@@ -55,7 +55,7 @@ const ProductsDetail = () => {
 
     toast.push(
       <Notification type='success' header='Order Submitted' closable>
-        We have received your details. Our team will contact you soon to finalize the order, inshAllah!
+        We have received your details. Our team will contact you soon to finalize the order!
       </Notification>,
       { placement: 'bottomEnd', duration: 5000 }
     )
@@ -92,6 +92,7 @@ const ProductsDetail = () => {
 
       const relatedResponse = await fetch(`/api/products?category=${data.product.category}`);
       const relatedData = await relatedResponse.json();
+      
       const filteredProducts = relatedData.products
         .filter((p) => p.id !== data.product.id)
         .slice(0, 3);
@@ -214,12 +215,8 @@ const ProductsDetail = () => {
         </Button>
       </Box>
 
-
-      {/* FAQ and contact Section container */}
-      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: '3rem', justifyContent: 'center', my: '2rem' }}>
-
         {/* FAQ Section */}
-        <Box >
+        <Box sx={{width:{xs: '90%', md: '60%'}, mx:'auto'}}>
           <Typography variant="h5" fontWeight="bold" gutterBottom>
             Frequently Asked Questions
           </Typography>
@@ -246,57 +243,6 @@ const ProductsDetail = () => {
             </Accordion>
           ))}
         </Box>
-
-        {/* Contact Section */}
-        <Box
-          sx={{
-            // maxWidth: '600px',
-            mx: 'auto',
-            // px: 2,
-            textAlign: 'center',
-            borderLeft: { xs: '0', md: '1px solid gray' },
-            pl: { xs: '0', md: '2rem' }
-
-          }}
-        >
-          <Typography variant="h5" fontWeight="bold" gutterBottom>
-            Have Questions About This Product?
-          </Typography>
-          <Typography variant="body1" mb={2}>
-            If you have any questions or need more information about this product, our team is here to assist you.
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <TextField label="Your Name" fullWidth />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField label="Your Email" fullWidth />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Your Message (e.g., ask about sizing, materials, or shipping)"
-                fullWidth
-                multiline
-                rows={4}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Button
-                variant="contained"
-                sx={{
-                  bgcolor: theme.palette.customRed.main,
-                  textTransform: 'none',
-                  px: 4,
-                }}
-              >
-                Send Inquiry
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
-
-      </Box>
-
 
       {/* Related Products Section */}
       <Box>

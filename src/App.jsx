@@ -7,6 +7,8 @@ import Contact from './pages/Contact'
 import Products from './pages/Products'
 import ProductsDetail from './pages/ProductsDetail'
 import Gallery from './pages/Gallery'
+import PrivacyPolicy from './components/PrivacyPolicy'
+import TermsAndConditions from './components/TermsAndConditions'
 
 const App = () => {
   return (
@@ -19,6 +21,8 @@ const App = () => {
             <Route path='about' element={<About />} />
             <Route path='contact' element={<Contact />} />
             <Route path='products/:id' element={<ProductsDetail />} />
+            <Route path='privacy-policies' element={<PrivacyPolicy />} />
+            <Route path='terms-and-conditions' element={<TermsAndConditions />} />
         </Route>
       </Routes>
     </BrowserRouter>

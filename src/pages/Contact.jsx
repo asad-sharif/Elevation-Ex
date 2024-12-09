@@ -27,7 +27,7 @@ const Contact = () => {
 
     toast.push(
       <Notification type='success' header='Request Submitted' closable>
-        We have received your details. Our team will contact you soon to finalize the order, inshAllah!
+        We have received your details. Our team will contact you soon!
       </Notification>,
       { placement: 'bottomEnd', duration: 5000 }
     )
