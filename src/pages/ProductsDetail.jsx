@@ -22,7 +22,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { theme } from '@/theme';
-import { Notification,  useToaster } from 'rsuite';
+import { Notification, useToaster } from 'rsuite';
 import 'rsuite/dist/rsuite-no-reset.min.css';
 import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
 import SentimentSatisfiedOutlinedIcon from '@mui/icons-material/SentimentSatisfiedOutlined';
@@ -184,9 +184,9 @@ const ProductsDetail = () => {
         </Typography>
         <Grid container spacing={3}>
           {[
-            { title: 'Impact-resistant padding for safety.', icon: <VerifiedUserOutlinedIcon fontSize='large' sx={{mr:'1rem'}}/>},
-            { title: 'Snug fit for enhanced comfort.', icon: <SentimentSatisfiedOutlinedIcon fontSize='large' sx={{mr:'1rem'}}/>},
-            { title: 'Premium-quality leather for durability.', icon: <WorkspacePremiumOutlinedIcon fontSize='large' sx={{mr:'1rem'}}/>},
+            { title: 'Impact-resistant padding for safety.', icon: <VerifiedUserOutlinedIcon fontSize='large' sx={{ mr: '1rem' }} /> },
+            { title: 'Snug fit for enhanced comfort.', icon: <SentimentSatisfiedOutlinedIcon fontSize='large' sx={{ mr: '1rem' }} /> },
+            { title: 'Premium-quality leather for durability.', icon: <WorkspacePremiumOutlinedIcon fontSize='large' sx={{ mr: '1rem' }} /> },
           ].map((feature, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
               <Card
@@ -202,7 +202,7 @@ const ProductsDetail = () => {
                   },
                   bgcolor: 'rgba(255, 0, 0, 0.05)',
                 }}
-              >                
+              >
                 <Typography variant="body1" fontWeight="500">
                   {feature.icon}
                   {feature.title}
@@ -215,39 +215,41 @@ const ProductsDetail = () => {
 
       <Box className='product-page-collection-banner' sx={{ height: '70vh', width: '100%', display: 'flex', flexDirection: 'column', gap: '1rem', justifyContent: 'center', alignItems: 'center', color: 'white' }}>
         <Typography variant="h4" sx={{ fontSize: { xs: '1.3rem', md: '2rem', textAlign: 'center' } }}>Discover Your Next Adventure in Style</Typography>
-        <Button variant="outlined" color="customRed">
-          Browse Collection
-        </Button>
+        <Link to='/products'>
+          <Button variant="outlined" color="customRed">
+            Browse Collection
+          </Button>
+        </Link>
       </Box>
 
-        {/* FAQ Section */}
-        <Box sx={{width:{xs: '90%', md: '60%'}, mx:'auto'}}>
-          <Typography variant="h5" fontWeight="bold" gutterBottom>
-            Frequently Asked Questions
-          </Typography>
-          {[
-            { question: 'What is the delivery time?', answer: 'Delivery takes 5-7 business days.' },
-            { question: 'Do you offer custom sizes?', answer: 'Yes, custom sizes are available upon request.' },
-            { question: 'What is the return policy?', answer: 'We offer a 30-day return policy.' },
-          ].map((faq, index) => (
-            <Accordion
-              key={index}
-              sx={{
-                boxShadow: 2,
-                mb: 2,
-                borderRadius: 2,
-                overflow: 'hidden',
-              }}
-            >
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography fontWeight="500">{faq.question}</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Typography>{faq.answer}</Typography>
-              </AccordionDetails>
-            </Accordion>
-          ))}
-        </Box>
+      {/* FAQ Section */}
+      <Box sx={{ width: { xs: '90%', md: '60%' }, mx: 'auto' }}>
+        <Typography variant="h5" fontWeight="bold" gutterBottom>
+          Frequently Asked Questions
+        </Typography>
+        {[
+          { question: 'What is the delivery time?', answer: 'Delivery takes 5-7 business days.' },
+          { question: 'Do you offer custom sizes?', answer: 'Yes, custom sizes are available upon request.' },
+          { question: 'What is the return policy?', answer: 'We offer a 30-day return policy.' },
+        ].map((faq, index) => (
+          <Accordion
+            key={index}
+            sx={{
+              boxShadow: 2,
+              mb: 2,
+              borderRadius: 2,
+              overflow: 'hidden',
+            }}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography fontWeight="500">{faq.question}</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography>{faq.answer}</Typography>
+            </AccordionDetails>
+          </Accordion>
+        ))}
+      </Box>
 
       {/* Related Products Section */}
       <Box>
@@ -298,7 +300,7 @@ const ProductsDetail = () => {
         aria-describedby="modal-modal-description"
       >
         <Box
-          sx={{ px: '1rem', py: '2rem', width:{xs:'90%', md:'50%', lg:'50%'} }}
+          sx={{ px: '1rem', py: '2rem', width: { xs: '90%', md: '50%', lg: '50%' } }}
           style={modalStyles}
         >
           <form className='flex flex-col md:ml-auto w-full' onSubmit={handleSubmit}>

@@ -372,7 +372,7 @@ const Home = () => {
             textTransform: 'uppercase',
           }}
         >
-          <Link to='contact'>Inquire Now</Link>
+          <Link to='/contact'>Inquire Now</Link>
         </Button>
       </Box >
 
