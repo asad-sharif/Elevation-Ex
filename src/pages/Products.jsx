@@ -25,7 +25,9 @@ const Products = () => {
   }, []);
 
   // Paginate products
-  const paginatedProducts = products.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+  const paginatedProducts = React.useMemo(() => {
+    return products.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+  },  [products,page])
 
   // Handle page change
   const handlePageChange = (event, value) => {

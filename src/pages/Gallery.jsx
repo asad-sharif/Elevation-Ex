@@ -62,11 +62,11 @@ const Gallery = () => {
         <ImageList
           variant="masonry"
           // cols={4} 
-          cols={4}
-          gap={5}>
+          cols={3}
+          gap={10}>
           {imgList.map((item, index) => (
-            <ImageListItem key={index}>
-              <img src={item.img} alt={item.altText} className='w-full h-auto object-cover object-center' loading='lazy' />
+            <ImageListItem key={index} sx={{borderRadius:'12px'}}>
+              <img src={item.img} alt={item.altText} className='w-full h-auto object-cover object-center rounded-xl' loading='lazy' />
             </ImageListItem>
           ))}
         </ImageList>
@@ -75,4 +75,4 @@ const Gallery = () => {
   );
 };
 
-export default Gallery;
+export default React.memo(Gallery);
