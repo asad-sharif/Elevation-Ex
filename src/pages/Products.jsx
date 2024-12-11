@@ -1,15 +1,16 @@
-import { Badge, Box, Paper, Typography, Pagination, Button } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { Badge, Box, Paper, Typography, Pagination, Button, Stack } from '@mui/material';
+import React, { useEffect, useMemo, useState } from 'react';
 import Grid from '@mui/material/Grid2';
 import image from '../assets/bikeSuit.jpg';
 import { theme } from '@/theme';
-import { Link } from 'react-router-dom';
+import { Link, NavLink, useSearchParams } from 'react-router-dom';
 
 
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1); // State to track the current page
-  const itemsPerPage = 9; // Number of products per page
+  const [searchParams, setSearchParams] = useSearchParams()
+  const itemsPerPage = 9; // Number of products per page 
 
   useEffect(() => {
     async function fetchData() {
@@ -24,14 +25,59 @@ const Products = () => {
     fetchData().catch(console.error);
   }, []);
 
+  const categoryFilter = searchParams.get('category')
+  console.log(categoryFilter);
+
   // Paginate products
   const paginatedProducts = React.useMemo(() => {
-    return products.slice((page - 1) * itemsPerPage, page * itemsPerPage);
-  },  [products,page])
+    return categoryFilter
+      ? products.filter(product => product.category.toLowerCase() === categoryFilter).slice((page - 1) * itemsPerPage, page * itemsPerPage)
+      : products.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+  }, [products, page, categoryFilter])
+
+  console.log(paginatedProducts);
+
+  const categories = [
+    { category: "Gloves", search: "gloves" },
+    { category: "Jackets", search: "jackets" },
+    { category: "Shoes", search: "shoes" },
+    { category: "Suits", search: "suits" },
+    { category: "Bags", search: "bags" },
+    { category: "Outdoor", search: "outdoor" },
+    { category: "Electronics", search: "electronics" },
+    { category: "Fitness", search: "fitness" },
+    { category: "Accessories", search: "accessories" },
+    { category: "Climbing", search: "climbing" },
+    { category: "Helmets", search: "helmets" }
+  ];
 
   // Handle page change
   const handlePageChange = (event, value) => {
     setPage(value);
+  };
+
+  const filterLinkStyles = {
+    backgroundColor: '#b91c1c', // A vibrant blue color
+    color: '#fff', // White text color for contrast
+    fontSize: '0.8rem',
+    padding: '4px 10px', // Increased padding for better spacing
+    borderRadius: '20px', // More rounded corners for a pill shape
+    border: 'none', // Removing the border for a cleaner look
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Adding a subtle shadow for depth
+    cursor: 'pointer', // Changing cursor to pointer to indicate it's clickable
+    transition: 'background-color 0.3s ease', // Smooth transition for background color
+  };
+
+  const filterLinkActiveStyles = {
+    backgroundColor: 'black', // A vibrant blue color
+    color: '#fff', // White text color for contrast
+    fontSize: '0.8rem',
+    padding: '4px 10px', // Increased padding for better spacing
+    borderRadius: '20px', // More rounded corners for a pill shape
+    border: 'none', // Removing the border for a cleaner look
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Adding a subtle shadow for depth
+    cursor: 'pointer', // Changing cursor to pointer to indicate it's clickable
+    transition: 'background-color 0.3s ease', // Smooth transition for background color
   };
 
   return (
@@ -49,6 +95,24 @@ const Products = () => {
       </Box>
 
       <Box sx={{ maxWidth: '80rem', mx: 'auto', py: '50px', px: '1rem' }}>
+
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: '1.2rem', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+            {categories.map((filter, index) => (
+              <NavLink
+                key={index}
+                to={`?category=${filter.search}`}
+                style={() =>
+                  categoryFilter === filter.search ? filterLinkActiveStyles : filterLinkStyles
+                }
+              >
+                {filter.category}
+              </NavLink>
+            ))}
+          </Box>
+          {categoryFilter && <Link to='' className='underline'>Clear filter</Link>}
+        </Box>
+
         {products.length ? (
           <>
             <Grid container spacing={{ xs: 6, sm: 2, md: 2 }} justifyContent="center">
@@ -167,7 +231,7 @@ const Products = () => {
             {/* Pagination */}
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
               <Pagination
-                count={Math.ceil(products.length / itemsPerPage)} // Total pages
+                count={Math.ceil(categoryFilter ? paginatedProducts.length / itemsPerPage : products.length / itemsPerPage)} // Total pages
                 page={page} // Current page
                 onChange={handlePageChange} // Page change handler
               // color="red"

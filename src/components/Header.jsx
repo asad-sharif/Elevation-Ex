@@ -34,7 +34,7 @@ const Header = () => {
   const activeStyles = {
     fontWeight: 'bold',
   };
-
+    
   const { id } = useParams()
 
   const isPolicyPage = !!useMatch('/privacy-policies')
