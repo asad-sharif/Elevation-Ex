@@ -3,11 +3,18 @@ import { userRouter } from './routes/userRoutes.js'
 import { errorHandler, notFound } from './middleware/errorMiddleware.js'
 import { connectDB } from './config/db.js'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 8000
 
 const app = express()
 connectDB()
+
+// Allow requests from your frontend origin
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true, // If you're using cookies or Authorization headers
+}));
 
 // cookie-parser middleware
 app.use(cookieParser())

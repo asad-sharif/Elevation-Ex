@@ -3,6 +3,7 @@ import { Link, NavLink, useMatch, useParams } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Box, Drawer, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const Header = () => {
   const [open, setOpen] = useState(false);
@@ -34,14 +35,16 @@ const Header = () => {
   const activeStyles = {
     fontWeight: 'bold',
   };
-    
+
   const { id } = useParams()
 
   const isPolicyPage = !!useMatch('/privacy-policies')
   const isTCPage = !!useMatch('/terms-and-conditions')
+  const isAuthPage = !!useMatch('/auth')
+  const isAuthLoginPage = !!useMatch('/auth/login')
   // const isGallery = !!useMatch('/gallery')
   // const isProductDetailPage = !!id || !!isGallery --> this ensures the styles for pages which do not have header banners
-  const isProductDetailPage = !!id || !!isPolicyPage || !!isTCPage
+  const isProductDetailPage = !!id || !!isPolicyPage || !!isTCPage || !!isAuthPage || !!isAuthLoginPage
 
   return (
     <header
@@ -53,7 +56,7 @@ const Header = () => {
       <div className="flex justify-between items-center px-4 sm:px-8">
         {/* Centered brand name */}
         <Link to="/" className={`text-center `}>
-          <p className={`text-2xl sm:text-4xl font-extrabold text-red-600
+          <p className={`text-2xl sm:text-3xl font-extrabold text-red-600
             ${open ? 'hidden' : 'flex'}
             `}
           >
@@ -62,7 +65,7 @@ const Header = () => {
         </Link>
 
         {/* Navigation - hidden on small screens and visible on larger ones */}
-        <nav className={`hidden md:flex gap-6 text-lg
+        <nav className={`hidden md:flex gap-6 text-lg items-center
           ${scrolled ? 'text-white' : 'text-black'}
           // ${isProductDetailPage ? 'text-black' : 'text-white'}
           `} >
@@ -75,10 +78,13 @@ const Header = () => {
               {link.name}
             </NavLink>
           ))}
+          <Link to='/auth'>
+            <AccountCircleIcon />
+          </Link>
         </nav>
 
         <IconButton
-          onClick={toggleOpen}
+          onClick={toggleOpen}  
           sx={{
             display: { sm: 'block', md: 'none' },
             color: isProductDetailPage ? `${scrolled ? 'white' : 'black'}` : 'white',
@@ -144,6 +150,16 @@ const Header = () => {
                 {link.name}
               </NavLink>
             ))}
+
+            <NavLink to='/auth'
+              onClick={() => setOpen(false)}
+              style={({ isActive }) =>
+                isActive
+                  ? { fontWeight: 'bold', color: '#d32f2f' }
+                  : { color: '#333' }
+              }>
+              Account
+            </NavLink>
           </Box>
         </Drawer>
       </div>

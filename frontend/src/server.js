@@ -296,6 +296,7 @@ createServer({
     },
 
     routes() {
+        console.log('befoer pass thru');
         this.namespace = "api";
 
         this.get("/products", (schema) => {
@@ -306,5 +307,11 @@ createServer({
             let id = request.params.id;
             return schema.products.find(id);
         });
+
+
+        // Allow requests to real backend for implemented endpoints
+        this.passthrough('http://localhost:8000/**');
+
+        console.log('after pass thru');
     },
 });
