@@ -4,11 +4,21 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Box, Drawer, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useSelector } from 'react-redux';
 
 const Header = () => {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
+
+  let authenticatedUser = useSelector(state => state.login.user?.name)
+
+  useEffect(() => {
+    if (authenticatedUser) {
+      setIsAuthenticated(true)
+    }
+  }, [authenticatedUser, isAuthenticated])
 
   function toggleOpen() {
     setOpen((prev) => !prev);
@@ -78,13 +88,19 @@ const Header = () => {
               {link.name}
             </NavLink>
           ))}
-          <Link to='/auth'>
-            <AccountCircleIcon />
-          </Link>
+
+          {isAuthenticated && authenticatedUser
+            ? authenticatedUser
+            : <Link to='/auth'>
+              <AccountCircleIcon />
+            </Link>
+          }
+
+
         </nav>
 
         <IconButton
-          onClick={toggleOpen}  
+          onClick={toggleOpen}
           sx={{
             display: { sm: 'block', md: 'none' },
             color: isProductDetailPage ? `${scrolled ? 'white' : 'black'}` : 'white',

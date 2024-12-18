@@ -1,26 +1,45 @@
-import { createSlice } from "@reduxjs/toolkit";
-
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 
 const initialState = {
-    userInfo: localStorage.getItem('jwt')
-        ? JSON.parse(localStorage.getItem('jwt'))
-        : null
+    user: null,
+    authenticated: false,
 }
 
+export const login = createAsyncThunk(
+    'auth/login', async (formData) => {
+        const response = await axios.post('http://localhost:8000/api/user/auth', formData, {
+            withCredentials: true
+        })
+
+        return response.data
+    }
+)
+
 const authSlice = createSlice({
-    name: 'auth',
+    name: 'login',
     initialState,
     reducers: {
-        setCredentials: (state, action) => {
-            state.userInfo = action.payload
-            localStorage.setItem('jwt', JSON.stringify(action.payload))
-            logout: (state, action) => {
-                state.userInfo = null
-                localStorage.removeItem('jwt')
-            }
+        logout: state => {
+            state.user = null;
+            state.authenticated = false;
         }
+    },
+    extraReducers: builder => {
+        builder.addCase(login.pending, state => {
+            state.authenticated = false;
+            state.user = null;
+        });
+        builder.addCase(login.fulfilled, (state, action) => {
+            state.authenticated = true;
+            state.user = action.payload;
+        });
+        builder.addCase(login.rejected, (state, action) => {
+            state.authenticated = false;
+            state.user = null;
+        });
     }
 })
 
-export const { setCredentials, logout } = authSlice.actions 
+export const { logout } = authSlice.actions
 export default authSlice.reducer

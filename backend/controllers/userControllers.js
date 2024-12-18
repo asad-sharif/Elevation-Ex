@@ -19,8 +19,7 @@ export const authUser = asyncHandler(async (req, res) => {
             name: user.name
         })
     } else {
-        res.status(401)
-        throw new Error("Invalid email or password");
+        return res.status(401).json({ message: "Invalid email or password" }); // Send JSON error message
     }
 })
 
@@ -30,20 +29,15 @@ export const authUser = asyncHandler(async (req, res) => {
 export const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
 
-    console.log('Incoming request body:', req.body);
-
     // Check if the user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
-        console.log('User already exists:', email);
         return res.status(400).json({ message: 'User already exists' });
     }
 
     // Create a new user
     const user = await User.create({ name, email, password });
     if (user) {
-        console.log('User created successfully:', user);
-
         // Generate token and send response
         generateToken(res, user._id);
         return res.status(201).json({

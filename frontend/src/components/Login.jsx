@@ -1,8 +1,16 @@
+import { login } from '@/slices/authSlice';
 import { Box } from '@mui/material'
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom'
+import { Notification, useToaster } from 'rsuite'
+import 'rsuite/dist/rsuite-no-reset.min.css';
 
 const Login = () => {
+    const toast = useToaster()
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -17,24 +25,45 @@ const Login = () => {
         }))
     }
 
-    function handleSubmit(e) {
-        e.preventDefault()
+    const handleSubmit = async (event) => {
+        event.preventDefault();
 
-        console.log('Submitted formdata:', formData);
-        
+        let message = '';
 
-        //clear the form data
+        try {
+            const res = await dispatch(login(formData)).unwrap()
+
+            toast.push(
+                <Notification type='success' header='Login successful' closable>
+                    Welcome back, {res.name}!
+                </Notification>,
+                { placement: 'bottomEnd', duration: 5000 }
+            );
+
+            navigate('/'); 
+        } catch (error) {
+            toast.push(
+                <Notification type='error' header='Login failed' closable>
+                    Something went wrong. Try again.
+                </Notification>,
+                { placement: 'bottomEnd', duration: 5000 }
+            );
+        }
+
+        // clear the form data
         setFormData({
             email: '',
             password: ''
-        })
-    }
+        });
+    };
+
 
     return (
         <Box sx={{ display: 'flex', height: '100vh', width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', px: '2rem' }}>
+
             <form className='md:w-3/4' onSubmit={handleSubmit}>
                 <h2 className='text-gray-900 text-2xl text-center font-medium title-font mb-3'>
-                    Welcome back!
+                    Sign in your account!
                 </h2>
                 <h3 className='mb-8 text-center'>New here?
                     <Link to='/auth' className='mx-1 font-semibold hover:underline'>Sign Up</Link>

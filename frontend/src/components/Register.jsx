@@ -29,14 +29,44 @@ const Register = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        try {
-            const res = await axios.post('http://localhost:8000/api/user/', formData)
-            console.log('resss', res);
-        } catch (error) {
-            console.log('erorr', error);
+        let message
 
+        try {
+            const res = await axios.post('http://localhost:8000/api/user/', formData, { withCredentials: true });
+
+            if (res) {
+                console.log('response:', res);
+            }
+
+            toast.push(
+                <Notification type='success' header='Registration successful' closable>
+                    {message}
+                </Notification>,
+                { placement: 'bottomEnd', duration: 5000 }
+            )
+
+            navigate('login')
+
+        } catch (error) {
+            // Check for server response
+            message = error.response.data.message
+            console.log(message);
+            
+            toast.push(
+                <Notification type='error' header='Registration failed' closable>
+                    {message}
+                </Notification>,
+                { placement: 'bottomEnd', duration: 5000 }
+            )
         }
-    }
+
+        //clear form data
+        setFormData({
+            name: '',
+            email: '',
+            password: ''
+        })
+    };
 
     return (
         <Box sx={{ display: 'flex', height: '100vh', width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', px: '2rem' }}>
@@ -99,5 +129,6 @@ const Register = () => {
         </Box>
     )
 }
+
 
 export default Register
