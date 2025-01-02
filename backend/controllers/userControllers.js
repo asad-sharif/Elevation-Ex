@@ -16,7 +16,8 @@ export const authUser = asyncHandler(async (req, res) => {
         res.status(200).json({
             id: user._id,
             email: user.email,
-            name: user.name
+            name: user.name,
+            role: user.role
         })
     } else {
         return res.status(401).json({ message: "Invalid email or password" }); // Send JSON error message
@@ -46,6 +47,7 @@ export const registerUser = asyncHandler(async (req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
+                role: user.role
             },
         });
     } else {
@@ -92,6 +94,19 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
         res.status(200).json({ message: 'User updated succesfully', updatedUser })
     } else {
         res.status(404).json({ message: 'User not found' })
+    }
+
+})
+
+// @desc count allusers
+// route PUT /api/users/count
+// @access Public
+export const countUsers = asyncHandler(async (req, res) => {
+    try {
+        const totalUsers = await User.countAll()
+        return res.status(200).json({ totalUsers: totalUsers })
+    } catch (error) {
+        return res.status(400).json({ message: 'User count error.', Error: error })
     }
 
 })

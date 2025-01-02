@@ -1,28 +1,55 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useMatch, useParams } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Box, Drawer, IconButton } from '@mui/material';
+import { Badge, Box, Drawer, IconButton, Menu, MenuItem } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout, logoutUser } from '@/slices/authSlice'; // Assuming you have a logout action in your authSlice
+import { Notification, useToaster } from 'rsuite';
+import 'rsuite/dist/rsuite-no-reset.min.css';
+import { addToCart } from '@/slices/cartSlice';
+import Cart from './Cart';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 const Header = () => {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [openCart, setOpenCart] = useState(false)
+  const cartCount = useSelector(state => state.cart.products?.length)
 
-
-  let authenticatedUser = useSelector(state => state.login.user?.name)
+  const dispatch = useDispatch();
+  const toast = useToaster();
+  let authenticatedUser = useSelector(state => state.login.user?.name);
 
   useEffect(() => {
     if (authenticatedUser) {
-      setIsAuthenticated(true)
+      setIsAuthenticated(true);
     }
-  }, [authenticatedUser, isAuthenticated])
+  }, [authenticatedUser, isAuthenticated]);
 
   function toggleOpen() {
     setOpen((prev) => !prev);
   }
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    handleMenuClose();
+    toast.push(
+      <Notification type='success' header='You have been logged out successfully.' closable />,
+      { placement: 'bottomEnd', duration: 5000 }
+    );
+  };
 
   // Check scroll position
   useEffect(() => {
@@ -46,15 +73,18 @@ const Header = () => {
     fontWeight: 'bold',
   };
 
-  const { id } = useParams()
+  const { id } = useParams();
 
-  const isPolicyPage = !!useMatch('/privacy-policies')
-  const isTCPage = !!useMatch('/terms-and-conditions')
-  const isAuthPage = !!useMatch('/auth')
-  const isAuthLoginPage = !!useMatch('/auth/login')
-  // const isGallery = !!useMatch('/gallery')
-  // const isProductDetailPage = !!id || !!isGallery --> this ensures the styles for pages which do not have header banners
-  const isProductDetailPage = !!id || !!isPolicyPage || !!isTCPage || !!isAuthPage || !!isAuthLoginPage
+  function toggleCart() {
+    setOpenCart(prev => !prev)
+  }
+
+  const isPolicyPage = !!useMatch('/privacy-policies');
+  const isTCPage = !!useMatch('/terms-and-conditions');
+  const isAuthPage = !!useMatch('/auth');
+  const isCartPage = !!useMatch('/cart');
+  const isAuthLoginPage = !!useMatch('/auth/login');
+  const isProductDetailPage = !!id || !!isPolicyPage || !!isTCPage || !!isAuthPage || !!isAuthLoginPage || !!isCartPage
 
   return (
     <header
@@ -75,7 +105,7 @@ const Header = () => {
         </Link>
 
         {/* Navigation - hidden on small screens and visible on larger ones */}
-        <nav className={`hidden md:flex gap-6 text-lg items-center
+        <nav className={`hidden md:flex gap-6 text-sm items-center
           ${scrolled ? 'text-white' : 'text-black'}
           // ${isProductDetailPage ? 'text-black' : 'text-white'}
           `} >
@@ -89,14 +119,36 @@ const Header = () => {
             </NavLink>
           ))}
 
-          {isAuthenticated && authenticatedUser
-            ? authenticatedUser
-            : <Link to='/auth'>
+          {/* CART ICON ================= */}
+          <Badge badgeContent={cartCount} color='primary' max={5}>
+            <Link onClick={toggleCart}>
+              {/* <FaShoppingCart /> */}
+              <ShoppingCartIcon />
+            </Link>
+          </Badge>
+
+          <Cart openCart={openCart} toggleCart={toggleCart} />
+
+          {/* USER ICON ================= */}
+          {isAuthenticated && authenticatedUser ? (
+            <>
+              <span onClick={handleMenuOpen} style={{ cursor: 'pointer' }}>
+                {authenticatedUser}
+              </span>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+              >
+                {/* <MenuItem onClick={handleMenuClose}>Account</MenuItem> */}
+                <MenuItem onClick={handleLogout} sx={{":focus":{bgcolor:'transparent'}}}>Logout</MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <Link to='/auth'>
               <AccountCircleIcon />
             </Link>
-          }
-
-
+          )}
         </nav>
 
         <IconButton
@@ -167,6 +219,19 @@ const Header = () => {
               </NavLink>
             ))}
 
+            {/* CART LINK================= */}
+            <NavLink
+              onClick={() => {
+                toggleCart()
+                setOpen(false)
+              }}
+            // onClick={toggleCart}
+            // onClick={() => setOpen(false)}
+            >
+              Cart
+            </NavLink>
+
+            {/* ACCOUNT LINK================= */}
             <NavLink to='/auth'
               onClick={() => setOpen(false)}
               style={({ isActive }) =>

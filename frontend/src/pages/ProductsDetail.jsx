@@ -27,14 +27,18 @@ import 'rsuite/dist/rsuite-no-reset.min.css';
 import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined';
 import SentimentSatisfiedOutlinedIcon from '@mui/icons-material/SentimentSatisfiedOutlined';
 import WorkspacePremiumOutlinedIcon from '@mui/icons-material/WorkspacePremiumOutlined';
-
-
+import { FaWhatsapp, FaLinkedin, FaGithub, FaFilePdf, FaInstagram, FaEnvelope, FaWhatsappSquare, FaEnvelopeSquare, FaRegEnvelope, FaLinkedinIn } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart } from '@/slices/cartSlice';
 
 const ProductsDetail = () => {
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [open, setOpen] = useState(false)
+  const [quantity, setQuantity] = useState()
   const toast = useToaster()
+  const dispatch = useDispatch()
+  const isAuthenticated = useSelector(state => state.login?.authenticated)
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -42,39 +46,12 @@ const ProductsDetail = () => {
     message: ''
   })
 
+  console.log('Is Authenticated:', isAuthenticated);
+
+
   function handleOpen() {
     setOpen(prev => !prev)
   }
-
-  function handleChange(e) {
-    const { name, phone, email, message, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-
-    toast.push(
-      <Notification type='success' header='Order Submitted' closable>
-        We have received your details. Our team will contact you soon to finalize the order!
-      </Notification>,
-      { placement: 'bottomEnd', duration: 5000 }
-    )
-
-    setOpen(false)
-    setFormData({
-      name: '',
-      phone: '',
-      email: '',
-      message: ''
-    })
-    console.log("Form Data Submitted:", formData);
-  }
-
-
 
   const modalStyles = {
     position: 'absolute',
@@ -83,27 +60,38 @@ const ProductsDetail = () => {
     transform: 'translate(-50%, -50%)',
     boxShadow: 24,
     backgroundColor: 'white',
-    borderRadius: '5px'
+    borderRadius: '5px',
+    maxHeight: '90vh',
+    overflowY: 'auto',
+    width: '90%', // Adjust width as needed
+    maxWidth: '600px', // Set maximum width
+    textAlign:'center'
   };
 
   const { id } = useParams();
 
   useEffect(() => {
     async function fetchProduct() {
-      const response = await fetch(`/api/products/${id}`);
+      const response = await fetch(`http://localhost:8000/api/products/${id}`);
       const data = await response.json();
       setProduct(data.product);
 
-      const relatedResponse = await fetch(`/api/products?category=${data.product.category}`);
+      setQuantity(data.product.quantity) //reset quantity when id changes
+
+      const relatedResponse = await fetch(`http://localhost:8000/api/products/`);
       const relatedData = await relatedResponse.json();
+      // console.log(relatedData);
+
 
       const filteredProducts = relatedData.products
-        .filter((p) => p.id !== data.product.id)
+        .filter((p) => p.id !== data.product._id)
         .slice(0, 3);
+      // console.log(filteredProducts);
       setRelatedProducts(filteredProducts);
     }
     fetchProduct();
   }, [id]);
+
 
   if (!product) {
     return (
@@ -111,6 +99,35 @@ const ProductsDetail = () => {
         <Typography>Loading...</Typography>
       </Box>
     );
+  }
+
+  function handleAddToCart() {
+    if (!isAuthenticated) {
+      return setOpen(true)
+    }
+
+    dispatch(addToCart({
+      productId: id,
+      quantity: quantity
+    }))
+
+    setQuantity(product.quantity)
+
+    toast.push(
+      <Notification type='success' header='Product added to cart' />,
+      { placement: 'bottomEnd', duration: 1000 }
+    )
+  }
+
+  function increment() {
+    setQuantity(prev => prev += 1)
+  }
+  function decrement() {
+    setQuantity(prev => (
+      prev - 1 < product.quantity
+        ? product.quantity
+        : prev -= 1
+    ))
   }
 
   return (
@@ -143,9 +160,10 @@ const ProductsDetail = () => {
             }}
           >
             <img
-              src={image}
+              src={product.image}
               alt={product.name}
-              style={{ width: '100%', objectFit: 'cover', objectPosition: 'center', height: '60vh' }}
+              style={{ width: '100%', objectFit: 'cover', objectPosition: 'center', height: '60vh', }}
+              className='drop-shadow-2xl'
             />
           </Box>
         </Grid>
@@ -169,9 +187,57 @@ const ProductsDetail = () => {
               ({product.rating})
             </Typography>
           </Box>
+
           <Box mt={4} display="flex" gap={2}>
-            <Button variant="contained" color="customRed" sx={{ color: 'white' }} fullWidth onClick={handleOpen}>
-              Order Now
+
+            {/* QUANTITY BUTTON===================== */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: '.8rem' }}>
+              <Button
+                variant='outlined'
+                sx={{
+                  color: theme.palette.customRed.main,
+                  border: `1px solid ${theme.palette.customRed.main}`,
+                  borderRadius: '50%',
+                  minWidth: { xs: '30px', md: '40px' },
+                  minHeight: { xs: '30px', md: '40px' },
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '0',
+                }}
+                onClick={decrement}
+              >
+                -
+              </Button>
+              <span>{quantity}</span>
+              <Button
+                variant='outlined'
+                sx={{
+                  color: theme.palette.customRed.main,
+                  border: `1px solid ${theme.palette.customRed.main}`,
+                  borderRadius: '50%',
+                  minWidth: { xs: '30px', md: '40px' },
+                  minHeight: { xs: '30px', md: '40px' },
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '0',
+                }}
+                onClick={increment}
+              >
+                +
+              </Button>
+            </Box>
+
+            <Button
+              variant="contained"
+              color="customRed"
+              sx={{ color: 'white' }}
+              fullWidth
+              // onClick={handleOpen}
+              onClick={handleAddToCart}
+            >
+              Add to cart
             </Button>
           </Box>
         </Grid>
@@ -191,7 +257,7 @@ const ProductsDetail = () => {
             <Grid item xs={12} sm={6} md={4} key={index}>
               <Card
                 sx={{
-                  p: 3,
+                  p: { xs: 1, md: 3 },
                   boxShadow: 3,
                   textAlign: 'center',
                   borderRadius: 2,
@@ -203,8 +269,8 @@ const ProductsDetail = () => {
                   bgcolor: 'rgba(255, 0, 0, 0.05)',
                 }}
               >
-                <Typography variant="body1" fontWeight="500">
-                  {feature.icon}
+                {feature.icon}
+                <Typography variant="body1" mt={3}>
                   {feature.title}
                 </Typography>
               </Card>
@@ -258,8 +324,8 @@ const ProductsDetail = () => {
         </Typography>
         <Grid container spacing={3}>
           {relatedProducts.map((relatedProduct) => (
-            <Grid item xs={12} sm={4} key={relatedProduct.id}>
-              <Link to={`/products/${relatedProduct.id}`} style={{ textDecoration: 'none' }}>
+            <Grid item xs={12} sm={4} key={relatedProduct._id}>
+              <Link to={`/products/${relatedProduct._id}`} style={{ textDecoration: 'none' }}>
                 <Card
                   sx={{
                     transition: 'transform 0.3s',
@@ -269,8 +335,8 @@ const ProductsDetail = () => {
                 >
                   <CardMedia
                     component="img"
-                    height="140"
-                    image={image} // Replace with actual related product images
+                    sx={{ height: '200px' }}
+                    image={relatedProduct.image} // Replace with actual related product images
                     alt={relatedProduct.name}
                   />
                   <CardContent>
@@ -300,65 +366,14 @@ const ProductsDetail = () => {
         aria-describedby="modal-modal-description"
       >
         <Box
-          sx={{ px: '1rem', py: '2rem', width: { xs: '90%', md: '50%', lg: '50%' } }}
+          sx={{ px: '1rem', py: '2rem', display: 'flex', justifyItems: 'center', alignItems: 'center', gap: '1rem', flexDirection: 'column' }}
           style={modalStyles}
         >
-          <form className='flex flex-col md:ml-auto w-full' onSubmit={handleSubmit}>
-            <h2 className='text-gray-900 text-2xl mb-1 font-medium title-font'>Your order details</h2>
+          <Typography variant="body1" component={'h2'}>
+            Only Logged in users can add products to the cart.
+          </Typography>
 
-            <div className='relative mb-4'>
-              <label htmlFor='name' className='leading-7 text-sm text-gray-600'>Name</label>
-              <input
-                type='text'
-                id='name'
-                name='name'
-                onChange={handleChange}
-                value={formData.name}
-                className='w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
-                required
-              />
-            </div>
-            <div className='relative mb-4'>
-              <label htmlFor='phoneNumber' className='leading-7 text-sm text-gray-600'>Phone</label>
-              <input
-                type='tel'
-                id='phone'
-                name='phone'
-                onChange={handleChange}
-                value={formData.phone}
-                className='w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
-              />
-            </div>
-            <div className='relative mb-4'>
-              <label htmlFor='email' className='leading-7 text-sm text-gray-600'>Email</label>
-              <input
-                type='email'
-                id='email'
-                name='email'
-                onChange={handleChange}
-                value={formData.email}
-                className='w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
-                required
-              />
-            </div>
-            <div className='relative mb-4'>
-              <label htmlFor='message' className='leading-7 text-sm text-gray-600'>Message</label>
-              <textarea
-                id='message'
-                name='message'
-                onChange={handleChange}
-                value={formData.message}
-                className='w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out'
-                required
-              ></textarea>
-            </div>
-            <button type='submit' className='text-white w-full bg-gradient-to-r from-red-700 to bg-red-900 border-0 py-2 px-6 focus:outline-none hover:bg-red-800 rounded text-lg'>
-              Confirm Your Order
-            </button>
-            <p className='text-xs text-gray-500 mt-3'>
-              We may reach out to you via email or phone number.
-            </p>
-          </form>
+          <Link to='/auth/login' className='underline font-bold'>Please, login here</Link>
 
         </Box>
       </Modal>

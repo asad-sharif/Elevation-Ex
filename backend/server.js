@@ -4,6 +4,8 @@ import { errorHandler, notFound } from './middleware/errorMiddleware.js'
 import { connectDB } from './config/db.js'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
+import { productRouter } from './routes/productRoutes.js'
+import orderRouter from './routes/orderRouter.js'
 
 const PORT = process.env.PORT || 8000
 
@@ -27,6 +29,8 @@ app.use(express.urlencoded({ extended: true }))
 
 // routes
 app.use('/api/user/', userRouter)
+app.use('/api/products/', productRouter)
+app.use('/api/orders/', orderRouter)
 
 
 // error handling middlewares

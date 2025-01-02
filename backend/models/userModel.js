@@ -5,6 +5,7 @@ const userSchema = mongoose.Schema({
     name: { type: String, required: [true, 'User name is required according to schema'] },
     email: { type: String, required: [true, 'User email is required according to schema'], unique: true },
     password: { type: String, required: [true, 'User password is required according to schema'] },
+    role:{type:String, default: 'user'}
 }, { timestamps: true })
 
 userSchema.pre('save', async function (next) {
@@ -18,6 +19,10 @@ userSchema.pre('save', async function (next) {
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password)
+}
+
+userSchema.statics.countAll = async function () {
+    return await this.countDocuments()
 }
 
 export const User = mongoose.model('User', userSchema)  

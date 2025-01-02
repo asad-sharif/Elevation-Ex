@@ -32,15 +32,18 @@ const Login = () => {
 
         try {
             const res = await dispatch(login(formData)).unwrap()
+            // console.log(res);
 
             toast.push(
-                <Notification type='success' header='Login successful' closable>
-                    Welcome back, {res.name}!
-                </Notification>,
+                <Notification type='success' header={`Welcome back, ${res.name}!`} closable />,
                 { placement: 'bottomEnd', duration: 5000 }
             );
 
-            navigate('/'); 
+            if (res.role === 'admin') {
+                navigate('/admin')
+            } else {
+                navigate('/');
+            }
         } catch (error) {
             toast.push(
                 <Notification type='error' header='Login failed' closable>

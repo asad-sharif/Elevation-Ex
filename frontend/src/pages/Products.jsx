@@ -1,32 +1,47 @@
-import { Badge, Box, Paper, Typography, Pagination, Button, Stack } from '@mui/material';
+import { Badge, Box, Paper, Typography, Pagination, Button, Stack, Tooltip, Modal } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 import Grid from '@mui/material/Grid2';
 import image from '../assets/bikeSuit.jpg';
 import { theme } from '@/theme';
 import { Link, NavLink, useSearchParams } from 'react-router-dom';
+import { FaShoppingCart } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart } from '@/slices/cartSlice';
+import { Notification, useToaster } from 'rsuite';
+import 'rsuite/dist/rsuite-no-reset.min.css';
+
 
 
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1); // State to track the current page
   const [searchParams, setSearchParams] = useSearchParams()
-  const itemsPerPage = 9; // Number of products per page 
+  const [open, setOpen] = useState(false)
+  const dispatch = useDispatch()
+  const toast = useToaster()
+  const isAuthenticated = useSelector(state => state.login?.authenticated)
+  const itemsPerPage = 9; // Number of products per page
+
+  // console.log('Is Aunthenticated:', isAuthenticated);
+
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch('/api/products');
+      const response = await fetch('http://localhost:8000/api/products');
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
       setProducts(data.products); // Ensure data is correctly accessed
+      // console.log(data.products);
     }
 
     fetchData().catch(console.error);
+
   }, []);
 
   const categoryFilter = searchParams.get('category')
-  console.log(categoryFilter);
+  // console.log(categoryFilter);
 
   // Paginate products
   const paginatedProducts = React.useMemo(() => {
@@ -35,7 +50,7 @@ const Products = () => {
       : products.slice((page - 1) * itemsPerPage, page * itemsPerPage)
   }, [products, page, categoryFilter])
 
-  console.log(paginatedProducts);
+  // console.log(paginatedProducts);
 
   const categories = [
     { category: "Gloves", search: "gloves" },
@@ -80,6 +95,39 @@ const Products = () => {
     transition: 'background-color 0.3s ease', // Smooth transition for background color
   };
 
+  function handleOpen() {
+    setOpen(prev => !prev)
+  }
+
+  const modalStyles = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    boxShadow: 24,
+    backgroundColor: 'white',
+    borderRadius: '5px',
+    maxHeight: '90vh',
+    overflowY: 'auto',
+    width: '90%', // Adjust width as needed
+    maxWidth: '600px', // Set maximum width
+    textAlign: 'center'
+  };
+
+  function handleAddToCart(product) {
+    if (!isAuthenticated) return
+
+    dispatch(addToCart({
+      productId: product._id,
+      quantity: product.quantity
+    }))
+
+    toast.push(
+      <Notification type='success' header='Product added to cart' />,
+      { placement: 'bottomEnd', duration: 3000 }
+    )
+  }
+
   return (
     <Box>
       {/* Header Section */}
@@ -118,110 +166,139 @@ const Products = () => {
             <Grid container spacing={{ xs: 6, sm: 2, md: 2 }} justifyContent="center">
               {paginatedProducts.map((product, index) => (
                 <Grid item size={{ xs: 12, sm: 6, md: 4 }} key={index}>
-                  <Link to={`${product.id}`}>
-                    <Paper
-                      elevation={6} // Subtle shadow for depth
+                  {/* <Link to={`${product._id}`}> */}
+                  <Paper
+                    elevation={6} // Subtle shadow for depth
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      borderRadius: '5px',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      height: '100%',
+                      bgcolor: '#ffffff',
+                      transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth hover effects
+                      '&:hover': {
+                        transform: 'scale(1.01)', // Slightly scale up on hover
+                        boxShadow: 20,
+                      },
+                    }}
+                  >
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      style={{
+                        width: '100%',
+                        height: '250px',
+                        objectFit: 'cover',
+                        transition: 'transform 0.3s ease',
+                      }}
+                    />
+                    {/* Category Badge */}
+                    <Typography
+                      variant="body2"
                       sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        borderRadius: '5px',
-                        position: 'relative',
-                        overflow: 'hidden',
-                        height: '100%',
-                        bgcolor: '#ffffff',
-                        transition: 'transform 0.3s ease, box-shadow 0.3s ease', // Smooth hover effects
-                        '&:hover': {
-                          transform: 'scale(1.01)', // Slightly scale up on hover
-                          boxShadow: 20,
-                        },
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                        zIndex: 10,
+                        bgcolor: 'black', // Vibrant background color
+                        color: 'white',
+                        px: '1.2rem',
+                        py: '0.4rem',
+                        borderBottomLeftRadius: '25px',
+                        borderTopRightRadius: '5px',
+                        fontWeight: 'bold',
+                        fontSize: '0.85rem',
                       }}
                     >
-                      <img
-                        src={image}
-                        alt={product.name}
-                        style={{
-                          width: '100%',
-                          height: 'auto',
-                          objectFit: 'cover',
-                          transition: 'transform 0.3s ease',
-                        }}
-                      />
-                      {/* Category Badge */}
+                      {product.category}
+                    </Typography>
+
+                    {/* Card Body */}
+                    <Box sx={{ px: '1rem', py: '1.2rem', flex: 1 }}>
                       <Typography
-                        variant="body2"
+                        variant="h6"
                         sx={{
-                          position: 'absolute',
-                          top: 0,
-                          right: 0,
-                          zIndex: 10,
-                          bgcolor: 'black', // Vibrant background color
-                          color: 'white',
-                          px: '1.2rem',
-                          py: '0.4rem',
-                          borderBottomLeftRadius: '25px',
-                          borderTopRightRadius: '5px',
-                          fontWeight: 'bold',
-                          fontSize: '0.85rem',
+                          fontWeight: '600',
+                          color: '#333',
+                          lineHeight: 1.4,
+                          mb: 1,
                         }}
                       >
-                        {product.category}
+                        {product.name}
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          color: '#666',
+                          mb: 2,
+                          fontSize: '0.875rem',
+                          fontStyle: 'italic',
+                        }}
+                      >
+                        {product.headline}
                       </Typography>
 
-                      {/* Card Body */}
-                      <Box sx={{ px: '1rem', py: '1.2rem', flex: 1 }}>
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            fontWeight: '600',
-                            color: '#333',
-                            lineHeight: 1.4,
-                            mb: 1,
-                          }}
-                        >
-                          {product.name}
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            color: '#666',
-                            mb: 2,
-                            fontSize: '0.875rem',
-                            fontStyle: 'italic',
-                          }}
-                        >
-                          {product.headline}
-                        </Typography>
+                      {/* Price */}
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontWeight: 'bold',
+                          color: '#e53935', // Red for price emphasis
+                          // mb: 2,
+                        }}
+                      >
+                        ${product.price}
+                      </Typography>
 
-                        {/* Price */}
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            fontWeight: 'bold',
-                            color: '#e53935', // Red for price emphasis
-                            mb: 2,
-                          }}
-                        >
-                          ${product.price}
-                        </Typography>
+                      {/* min qyuantity */}
+                      <Typography variant="body2" sx={{ mb: 2 }}>
+                        Min Quantity: {product.quantity} units
+                      </Typography>
 
-                        {/* Add to Cart Button */}
+
+                      <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                        {/* View Details Button */}
+                        <Link to={`${product._id}`} style={{ flex: '10' }}>
+                          <Button
+                            variant="contained"
+                            fullWidth
+                            color='customRed'
+                            sx={{
+                              // bgcolor: 'customRed',
+                              color: 'white',
+                              fontWeight: 'bold',
+                              borderRadius: '5px',
+                              textTransform: 'none'
+                            }}
+                          >
+                            View Details
+                          </Button>
+                        </Link>
+
+                        {/* <Tooltip title={isAuthenticated ? "Add to cart" : "Login to add to cart"} arrow>
+                          <span> */}
                         <Button
-                          variant="contained"
-                          fullWidth
-                          color='customRed'
+                          size='large'
+                          // disabled={!isAuthenticated}
                           sx={{
-                            // bgcolor: 'customRed',
-                            color: 'white',
-                            fontWeight: 'bold',
-                            borderRadius: '5px',
-                            textTransform: 'none',
+                            border: isAuthenticated ? `1px solid ${theme.palette.customRed.main}` : '1px solid #9999',
+                            color: theme.palette.customRed.main,
+                            flex: '1',
                           }}
+                          onClick={isAuthenticated ? () => handleAddToCart(product) : () => setOpen(true)}
                         >
-                          View Details
+                          <FaShoppingCart size='20px' />
                         </Button>
+                        {/* </span>
+                        </Tooltip> */}
+
                       </Box>
-                    </Paper>
-                  </Link>
+
+                    </Box>
+                  </Paper>
+                  {/* </Link> */}
 
                 </Grid>
               ))}
@@ -243,6 +320,26 @@ const Products = () => {
             Loading...
           </Typography>
         )}
+
+        {/* Modal ------------------------------------- */}
+        <Modal
+          open={open}
+          onClose={() => setOpen(false)}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box
+            sx={{ px: '1rem', py: '2rem', display: 'flex', justifyItems: 'center', alignItems: 'center', gap: '1rem', flexDirection: 'column' }}
+            style={modalStyles}
+          >
+            <Typography variant="body1" component={'h2'}>
+              Only Logged in users can add products to the cart.
+            </Typography>
+
+            <Link to='/auth/login' className='underline font-bold'>Please, login here</Link>
+
+          </Box>
+        </Modal>
       </Box>
     </Box>
   );

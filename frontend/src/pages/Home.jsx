@@ -27,15 +27,17 @@ const Home = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch('/api/products');
+      const response = await fetch('http://localhost:8000/api/products');
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
       setProducts(data.products); // Ensure data is correctly accessed
+      // console.log(data.products);
     }
 
     fetchData().catch(console.error);
+
   }, []);
 
   const images = [
@@ -101,10 +103,10 @@ const Home = () => {
         {products ? (
           <Grid container spacing={4} justifyContent={'center'}>
             {products.map((product, index) => (
-              <Grid item size={{ xs: 12, md: 4 }} key={product.id}>
-                <Link to={`products/${product.id}`} >
-                  <Box sx={{ position: 'relative', borderRadius: '5px', height: '500px', transition: 'transform 0.3s ease-in-out', boxShadow: '5px 5px 20px rgba(0,0,0,0.5)', ":hover": { transform: 'scale(1.02)' } }}>
-                    <img src={image} alt=""
+              <Grid item size={{ xs: 12, sm: 6, md: 4 }} key={product.id}>
+                <Link to={`products/${product._id}`} >
+                  <Box sx={{ position: 'relative', borderRadius: '5px', height: '500px', transition: 'transform 0.3s ease-in-out', boxShadow: '5px 5px 10px rgba(0,0,0,0.5)', ":hover": { transform: 'scale(1.02)' } }}>
+                    <img src={product.image} alt=""
                       className='w-full h-full object-cover object-center rounded-[5px]' />
                     {/* Rotated Arrow Icon */}
                     <Box

@@ -12,6 +12,9 @@ export const theme = createTheme({
         }
     },
     palette: {
+        primary: {
+            main: '#b91c1c'
+        },
         customRed: {
             main: '#b91c1c',
         },

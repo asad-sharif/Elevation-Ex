@@ -5,19 +5,17 @@ import App from './App.jsx'
 import { theme } from './theme'
 import { ThemeProvider } from '@mui/material'
 import { Provider } from 'react-redux'
-import store from './store'
-// import { makeServer } from './server';
-
-// if (process.env.NODE_ENV === 'development') {
-//   makeServer();
-// }
+import store, { persistor } from './store'
+import { PersistGate } from 'redux-persist/integration/react'
 
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
-    <StrictMode>
-      <ThemeProvider theme={theme}>
-        <App />
-      </ThemeProvider>
-    </StrictMode>
+    <PersistGate loading={null} persistor={persistor}>
+      <StrictMode>
+        <ThemeProvider theme={theme}>
+          <App />
+        </ThemeProvider>
+      </StrictMode>
+    </PersistGate>
   </Provider>
 )
